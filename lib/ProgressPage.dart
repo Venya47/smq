@@ -16,15 +16,19 @@ class _ProgressPageState extends State<ProgressPage> {
   final dbService = DatabaseServices();
   final String? userId = AuthMethods().getCurrentUserID();
   late double prog=0.0;
-  void setProg()
-  async {
-      prog=await dbService.getProgress();
+  void setProg() async {
+    double result = await dbService.getProgress(); //Await the value
+    setState(() {
+      prog = result;
+      _valueNotifier.value = prog; //Update the circular progress bar
+    });
   }
+
   @override
   void initState()
   {
-    setProg();
     super.initState();
+    setProg();
   }
 
   @override
@@ -64,7 +68,7 @@ class _ProgressPageState extends State<ProgressPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '${value.toInt()}%',
+                            '${prog}%',
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w200,

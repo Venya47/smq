@@ -25,12 +25,12 @@ class _dummyState extends State<dummy> {
     total_ques=widget.testedQuestion.length;
     crt_ques=widget.crt;
     score=(crt_ques/total_ques)*100;
+    DateTime date=DateTime.now();
+    dbService.addTest(Test(createdAt: date, questions: widget.testedQuestion, total_ques: total_ques, crt_ques: crt_ques, score: score));
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    DateTime date=DateTime.now();
-    dbService.addTest(Test(createdAt: date, questions: widget.testedQuestion, total_ques: total_ques, crt_ques: crt_ques, score: score));
     return Scaffold(
         appBar: AppBar(
           title: Center(child: Text('Questions',style: TextStyle(color: Colors.pink,fontWeight:FontWeight.bold),textAlign:TextAlign.center,)),
