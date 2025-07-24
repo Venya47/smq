@@ -247,5 +247,15 @@ class DatabaseServices  {
       return 0.0;
     }
   }
+  Future<void> deleteUser() async {
+    await FirebaseFirestore.instance.collection('finalUser').doc(userId).delete();
+  }
+
+  Future<void> updateUser( String name) async {
+    await FirebaseFirestore.instance.collection('finalUser').doc(userId).update({
+      'u_name': name,
+    });
+  }
+
 
 }

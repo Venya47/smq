@@ -33,7 +33,7 @@ class _SignUpState extends State<SignUp> {
 
         Map<String, dynamic> userInfo = {
           "email": email,
-          "username": name,
+          "u_name": name,
           "progress":progress,
           "createdAt": DateTime.now(),
         };
