@@ -68,7 +68,7 @@ class _ProgressPageState extends State<ProgressPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '${prog}%',
+                            '${prog.toInt()}%',
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w200,

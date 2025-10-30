@@ -78,19 +78,12 @@ class _QuizzAppState extends State<QuizzApp> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Quiz with Question Set',
-            style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-        ),
         backgroundColor: Colors.greenAccent,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -103,17 +96,27 @@ class _QuizzAppState extends State<QuizzApp> {
           ),
           const SizedBox(height: 16),
           ...List.generate(4, (index) {
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: TextButton(
-                  onPressed: () => handleAnswer(index),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.pink[300],
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              child: ElevatedButton(
+                onPressed: () => handleAnswer(index),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink[400],
+                  padding: const EdgeInsets.symmetric(vertical: 18.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  child: Text(
-                    qb.getOption(index),
-                    style: const TextStyle(color: Colors.white, fontSize: 20.0),
+                  elevation: 5,
+                  shadowColor: Colors.pinkAccent,
+                ),
+                child: Text(
+                  qb.getOption(index),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),

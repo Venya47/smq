@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1002308962541",
+    "project_id": "smq-ee",
+    "storage_bucket": "smq-ee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1002308962541:android:3b76991b5dce45a7e9e4e4",
+        "android_client_info": {
+          "package_name": "com.example.smq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmPEX7z7nqIZTDrFEJre015sqR6RXPnQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
