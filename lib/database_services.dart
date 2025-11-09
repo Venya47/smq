@@ -2,9 +2,10 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Model/Question.dart';
-import 'Model/Test.dart';
 import 'Model/User.dart';
 import 'entry/auth.dart';
+import 'Model/Test.dart';
+import 'Model/JournalEntry.dart';
 
 class DatabaseServices  {
   final String? userId =  AuthMethods().getCurrentUserID();
@@ -257,5 +258,21 @@ class DatabaseServices  {
     });
   }
 
+  Future<void> saveEntry(JournalEntry entry) async {
+    if (entry.id.isEmpty) {
+      await instance.collection('finalUser').doc(userId).collection('journal').add(entry.toMap());
+    } else {
+      await instance.collection('finalUser').doc(userId).collection('journal').doc(entry.id).set(entry.toMap());
+    }
+  }
+
+  Future<List<JournalEntry>> fetchEntries() async {
+    final snap = await instance.collection('finalUser').doc(userId).collection('journal').orderBy('date', descending: true).get();
+    return snap.docs.map((d) => JournalEntry.fromMap(d.id, d.data())).toList();
+  }
+
+  Future<void> deleteEntry(String id) async {
+    await instance.collection('finalUser').doc(userId).collection('journal').doc(id).delete();
+  }
 
 }

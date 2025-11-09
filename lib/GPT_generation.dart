@@ -1,60 +1,70 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'Model/Question.dart';
-import 'database_services.dart'; // Your Question model
+import 'database_services.dart';
 
 Future<List<Question>> generateQuestionsUsingAI(String topic) async {
-  final url = Uri.parse("https://api.cohere.ai/v1/generate");
+  final url = Uri.parse("https://api.cohere.ai/v1/chat");
 
   final response = await http.post(
     url,
     headers: {
-      'Authorization': 'Bearer coHSbbsYdByKKBPKv6S6X8pZ1nN5XgpC9HjMBedZ', // ✅ Make sure to hide this in production
+      'Authorization': 'Bearer Y6fcROUKwroJ2WIXExWCsvDX7DJFiZwfmDjYY1WO',
       'Content-Type': 'application/json',
     },
     body: jsonEncode({
-      "prompt": '''
-Generate 10 multiple choice questions based on the topic "$topic". 
-Each question must have:
-- "ques": the question text
-- "options": a list of 4 options
-- "correctOptionIndex": index (0-3) of the correct answer
-
-Return the result as a JSON array like:
-[
-  {
-    "ques": "...",
-    "options": ["A", "B", "C", "D"],
-    "correctOptionIndex": 1
-  },
-  ...
-]
-''',
-      "max_tokens": 800,
-      "temperature": 0.7,
+      "model": "command-r-08-2024", // ✅ updated, currently supported model
+      "message": '''
+Generate 10 multiple choice questions based on the topic "$topic".
+Each question must have the structure:
+{
+  "ques": "question text",
+  "options": ["A", "B", "C", "D"],
+  "correctOptionIndex": 0
+}
+Return ONLY a JSON array of such questions.
+'''
     }),
   );
 
   if (response.statusCode == 200) {
-    final jsonBody = jsonDecode(response.body);
-    final text = jsonBody['generations'][0]['text'].trim();
-    final dbService = DatabaseServices();
-    final modid = await dbService.createModule(topic);
+    final data = jsonDecode(response.body);
+    String? text;
 
     try {
-      // Try to extract JSON array from the text
+      // New Cohere response format
+      text = data['text'] ??
+          data['message']?['content']?[0]?['text'] ??
+          data['generations']?[0]?['text'];
+    } catch (_) {
+      text = null;
+    }
+
+    if (text == null || text.isEmpty) {
+      throw Exception('No valid text returned from Cohere API.');
+    }
+
+    try {
+      // Extract JSON array from response text
       final RegExp jsonArrayRegex = RegExp(r'(\[\s*\{.*?\}\s*\])', dotAll: true);
       final match = jsonArrayRegex.firstMatch(text);
       final extractedJson = match?.group(1);
-      if (extractedJson == null) throw FormatException("JSON array not found in text.");
+
+      if (extractedJson == null) throw FormatException("JSON array not found in output.");
 
       final List<dynamic> decoded = jsonDecode(extractedJson);
-      List<Question> list = decoded.map((q) => Question(
-        mid: modid,
-        ques: q['ques'],
-        options: List<String>.from(q['options']),
-        correctOptionIndex: q['correctOptionIndex'],
-      )).toList();
+
+      final dbService = DatabaseServices();
+      final modid = await dbService.createModule(topic);
+
+      List<Question> list = decoded.map((q) {
+        return Question(
+          mid: modid,
+          ques: q['ques'] ?? '',
+          options: List<String>.from(q['options'] ?? []),
+          correctOptionIndex: q['correctOptionIndex'] ?? 0,
+        );
+      }).toList();
 
       return list;
     } catch (e) {
@@ -66,5 +76,3 @@ Return the result as a JSON array like:
     throw Exception('Cohere request failed.');
   }
 }
-
-
